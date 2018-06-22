@@ -4,9 +4,19 @@
 #include "FFDemux.h"
 #include "XLog.h"
 
+// 观察者测试类
+class TestObs : public IObserver
+{
+public:
+    TestObs(){}
+    void Update(XData data) override {
+        XLOGI("TestObs : accept data size = %d", data.size);
+    }
+
+};
+
 extern "C"
 JNIEXPORT jstring
-
 JNICALL
 Java_xplay_xplay_MainActivity_stringFromJNI(
         JNIEnv *env,
@@ -17,8 +27,11 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
     // 测试代码
     IDemux* demux = new FFDemux();
     demux->Open("sdcard/ffmpegtest/1080.mp4");
-    demux->Start();
 
+    TestObs* testObs = new TestObs();
+    demux->AddObs(testObs);
+
+    demux->Start();
     XSleep(3000);
     demux->Stop();
 //    for (;;)

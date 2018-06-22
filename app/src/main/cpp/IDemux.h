@@ -8,9 +8,10 @@
 
 #include "XData.h"
 #include "XThread.h"
+#include "IObserver.h"
 
 // 解封装接口类
-class IDemux : public XThread{
+class IDemux : public IObserver{
 public:
     // 解封装 打开本地文件 或者流媒体 rtmp rtsp http
     virtual bool Open(const char* url) = 0;
