@@ -5,6 +5,8 @@
 #ifndef XPLAY_XTHREAD_H
 #define XPLAY_XTHREAD_H
 
+// sleep毫秒
+void XSleep(int ms);
 
 class XThread {
 public:
@@ -18,6 +20,10 @@ public:
 private:
     // 包裹Main函数，方便控制
     void ThreadMain();
+
+protected:
+    bool isExit = false;            // 线程运行/停止变量
+    bool isThreadRunning = false;   // 标识Main()函数是否运行结束
 };
 
 

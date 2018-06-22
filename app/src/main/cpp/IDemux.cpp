@@ -6,14 +6,11 @@
 #include "XLog.h"
 
 void IDemux::Main() {
-    for (;;)
+    while (!isExit)
     {
         XData data = Read();
-        XLOGI("packet size %d", data.size);
-        if(data.size == 0)
-        {
-            XLOGI("Read finish");
-            break;
-        }
+        //XLOGI("packet size %d", data.size);
+//        if(data.size == 0) break;
+
     }
 }

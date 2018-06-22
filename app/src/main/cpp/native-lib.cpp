@@ -18,6 +18,9 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
     IDemux* demux = new FFDemux();
     demux->Open("sdcard/ffmpegtest/1080.mp4");
     demux->Start();
+
+    XSleep(3000);
+    demux->Stop();
 //    for (;;)
 //    {
 //        XData data = demux->Read();

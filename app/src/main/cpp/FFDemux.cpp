@@ -50,7 +50,7 @@ XData FFDemux::Read() {
         av_packet_free(&pkt);   // 失败释放pkt防止内存泄漏
         return XData();
     }
-    XLOGI("packet size %d pts %lld", pkt->size, pkt->pts);
+    //XLOGI("packet size %d pts %lld", pkt->size, pkt->pts);
     XData d;
     d.data = (unsigned char *) pkt;
     d.size = pkt->size;
