@@ -17,12 +17,12 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
     // 测试代码
     IDemux* demux = new FFDemux();
     demux->Open("sdcard/ffmpegtest/1080.mp4");
-
-    for (;;)
-    {
-        XData data = demux->Read();
-        XLOGI("packet size %d", data.size);
-    }
+    demux->Start();
+//    for (;;)
+//    {
+//        XData data = demux->Read();
+//        XLOGI("packet size %d", data.size);
+//    }
 
 
     return env->NewStringUTF(hello.c_str());

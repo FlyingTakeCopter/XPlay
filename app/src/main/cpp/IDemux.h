@@ -7,9 +7,10 @@
 
 
 #include "XData.h"
+#include "XThread.h"
 
 // 解封装接口类
-class IDemux {
+class IDemux : public XThread{
 public:
     // 解封装 打开本地文件 或者流媒体 rtmp rtsp http
     virtual bool Open(const char* url) = 0;
@@ -18,6 +19,9 @@ public:
 
     // 总时长 (毫秒)
     int totalms = 0;
+
+    // 重载线程主函数
+    virtual void Main();
 };
 
 
