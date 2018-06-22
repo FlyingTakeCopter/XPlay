@@ -5,13 +5,21 @@ android {
     defaultConfig {
         applicationId "xplay.xplay"
         minSdkVersion 14
-        targetSdkVersion 26
+        targetSdkVersion 21 //使用5.0(21)禁止动态权限申请
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++11"
+            }
+            ndk{
+                abiFilters "armeabi-v7a"
+            }
+        }
+        sourceSets{
+            main{
+                jniLibs.srcDirs=['libs']    //设置jni库路径
             }
         }
     }
