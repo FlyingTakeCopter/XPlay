@@ -1,8 +1,15 @@
 cmake_minimum_required(VERSION 3.4.1)
 
+# 设置cpp文件路径
+set(CPATH ${CMAKE_CURRENT_SOURCE_DIR}/src/main/cpp)
+
 add_library(native-lib
              SHARED
-             src/main/cpp/native-lib.cpp )
+             ${CPATH}/native-lib.cpp
+              ${CPATH}/IDemux.cpp
+              ${CPATH}/FFDemux.cpp
+              ${CPATH}/XData.cpp
+              ${CPATH}/XLog.cpp)
 
 # 添加头文件路径（相对于本文件路径）同路径下 include文件夹
 include_directories(include)
