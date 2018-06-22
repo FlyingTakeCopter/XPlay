@@ -15,6 +15,9 @@ public:
     virtual bool Open(const char* url) = 0;
     // 读取一帧数据，XData由调用者释放
     virtual XData Read() = 0;
+
+    // 总时长 (毫秒)
+    int totalms = 0;
 };
 
 

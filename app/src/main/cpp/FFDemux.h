@@ -7,6 +7,7 @@
 
 
 #include "IDemux.h"
+struct AVFormatContext;
 
 class FFDemux : public IDemux {
 public:
@@ -14,6 +15,11 @@ public:
     virtual bool Open(const char* url);
     // 读取一帧数据，XData由调用者释放
     virtual XData Read();
+
+    FFDemux();
+
+public:
+    AVFormatContext*ic = 0;//头文件中初始化，只适用于构造函数没有参数(C++11的坑)
 
 };
 
