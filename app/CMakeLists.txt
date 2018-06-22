@@ -26,7 +26,7 @@ set_target_properties(swresample PROPERTIES IMPORTED_LOCATION ${FF}/libswresampl
 find_library( log-lib log )
 
 target_link_libraries( native-lib
-                       GLESv2 ELG   #video
+                       GLESv2 EGL   #video
                        OpenSLES     #audio
                        android      #android native
                        avcodec avformat avutil swscale swresample   #ffmpeg
