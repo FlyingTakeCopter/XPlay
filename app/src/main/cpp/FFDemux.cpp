@@ -41,7 +41,19 @@ bool FFDemux::Open(const char *url) {
 }
 
 XData FFDemux::Read() {
+    if (!ic) return XData();
+    // 读取一帧
+    AVPacket*pkt = av_packet_alloc();
+    int res = av_read_frame(ic, pkt);
+    if (res != 0)
+    {
+        av_packet_free(&pkt);   // 失败释放pkt防止内存泄漏
+        return XData();
+    }
     XData d;
+    d.data = (unsigned char *) pkt;
+    d.size = pkt->size;
+
     return d;
 }
 
