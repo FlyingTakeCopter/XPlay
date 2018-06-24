@@ -12,6 +12,9 @@ add_library(native-lib
               ${CPATH}/XLog.cpp
               ${CPATH}/XThread.cpp
               ${CPATH}/IObserver.cpp
+              ${CPATH}/IDecode.cpp
+              ${CPATH}/FFDecode.cpp
+              ${CPATH}/XParameter.cpp
 
 
               )
