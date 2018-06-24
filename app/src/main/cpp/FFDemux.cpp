@@ -71,3 +71,19 @@ FFDemux::FFDemux() {
         avcodec_register_all();
     }
 }
+
+XParameter FFDemux::GetXParameter() {
+    if (!ic) return XParameter();
+
+    int res = av_find_best_stream(ic,AVMEDIA_TYPE_VIDEO, -1,-1,0,0);
+    if (res <0)
+    {
+        XLOGE("av_find_best_stream failed");
+        return XParameter();
+    }
+
+    XParameter parameter;
+    parameter.para = ic->streams[res]->codecpar;
+
+    return parameter;
+}

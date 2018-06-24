@@ -3,6 +3,8 @@
 #include "IDemux.h"
 #include "FFDemux.h"
 #include "XLog.h"
+#include "IDecode.h"
+#include "FFDecode.h"
 
 // 观察者测试类
 class TestObs : public IObserver
@@ -30,6 +32,9 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
 
     TestObs* testObs = new TestObs();
     demux->AddObs(testObs);
+
+    IDecode*decode = new FFDecode();
+    decode->Open(demux->GetXParameter());
 
     demux->Start();
     XSleep(3000);

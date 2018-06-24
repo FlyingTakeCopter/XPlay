@@ -10,7 +10,9 @@
 // 解码接口
 class IDecode {
 public:
-    virtual bool Open(XParameter p);
+    // 打开解码器
+    virtual bool Open(XParameter p) = 0;
+
 };
 
 

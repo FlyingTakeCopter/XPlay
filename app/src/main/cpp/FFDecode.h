@@ -8,10 +8,14 @@
 
 #include "IDecode.h"
 
+struct AVCodecContext;
+
 class FFDecode : public IDecode {
 public:
     bool Open(XParameter p) override;
 
+protected:
+    AVCodecContext*codecxt;
 };
 
 
