@@ -34,7 +34,7 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
     demux->AddObs(testObs);
 
     IDecode*decode = new FFDecode();
-    decode->Open(demux->GetXParameter());
+    decode->Open(demux->GetVParameter());
 
     demux->Start();
     XSleep(3000);

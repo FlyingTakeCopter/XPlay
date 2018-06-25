@@ -34,6 +34,8 @@ bool FFDemux::Open(const char *url) {
     this->totalms = ic->duration / (AV_TIME_BASE / 1000);
     XLOGI("total ms = %d", this->totalms);
 
+    GetVParameter();
+    GetAParameter();
 
 
 
@@ -55,6 +57,20 @@ XData FFDemux::Read() {
     d.data = (unsigned char *) pkt;
     d.size = pkt->size;
 
+    // 判断是音频流还是视频流，并给XData赋值
+    if (pkt->stream_index == audioStream)
+    {
+        d.isAudio = true;
+    }else if(pkt->stream_index == videoStream)
+    {
+        d.isAudio = false;
+    }else
+    {
+        // 其他流
+        av_packet_free(&pkt);   // 失败释放pkt防止内存泄漏
+        return XData();
+    }
+
     return d;
 }
 
@@ -72,15 +88,35 @@ FFDemux::FFDemux() {
     }
 }
 
-XParameter FFDemux::GetXParameter() {
+XParameter FFDemux::GetVParameter() {
     if (!ic) return XParameter();
 
     int res = av_find_best_stream(ic,AVMEDIA_TYPE_VIDEO, -1,-1,0,0);
     if (res <0)
     {
-        XLOGE("av_find_best_stream failed");
+        XLOGE("GetVParameter failed");
         return XParameter();
     }
+
+    videoStream = res;  // 记录视频流
+
+    XParameter parameter;
+    parameter.para = ic->streams[res]->codecpar;
+
+    return parameter;
+}
+
+XParameter FFDemux::GetAParameter() {
+    if (!ic) return XParameter();
+
+    int res = av_find_best_stream(ic,AVMEDIA_TYPE_AUDIO, -1,-1,0,0);
+    if (res <0)
+    {
+        XLOGE("GetAParameter failed");
+        return XParameter();
+    }
+
+    audioStream = res; // 记录音频流
 
     XParameter parameter;
     parameter.para = ic->streams[res]->codecpar;

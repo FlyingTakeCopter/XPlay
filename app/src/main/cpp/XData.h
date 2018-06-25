@@ -11,6 +11,7 @@ public:
     unsigned char* data = 0;// 指针地址
     int size = 0;
     void Drop();
+    bool isAudio = false;
 };
 
 
