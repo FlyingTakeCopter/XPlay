@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/XPlay.iml" filepath="$PROJECT_DIR$/XPlay.iml" />
+      <module fileurl="file://C:\workspace_ffmpeg\XPlay\XPlay.iml" filepath="C:\workspace_ffmpeg\XPlay\XPlay.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\workspace_ffmpeg\XPlay\app\app.iml" filepath="C:\workspace_ffmpeg\XPlay\app\app.iml" />
     </modules>
   </component>
 </project>

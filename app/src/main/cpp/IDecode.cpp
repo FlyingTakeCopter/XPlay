@@ -2,10 +2,6 @@
 // Created by liuqikang on 2018/6/25.
 //
 
-extern "C"
-{
-#include <libavcodec/avcodec.h>
-}
 #include "IDecode.h"
 #include "XLog.h"
 
@@ -22,6 +18,7 @@ void IDecode::Update(XData data) {
         // 阻塞
         if (packs.size() < maxList)
         {
+            // 生产者 将产品加入缓冲队列
             packs.push_back(data);
             //XLOGI("packs push_back success size %d", packs.size());
             packMutex.unlock();
@@ -44,6 +41,7 @@ void IDecode::Main() {
             XSleep(1);
             continue;
         }
+        // 消费者从缓冲队列中提取数据 开始消费
         // 取出第一个pkt
         XData pack = packs.front();
         packs.pop_front();
@@ -67,9 +65,8 @@ void IDecode::Main() {
             }
         }
 
-
         // 释放pkt
-        av_packet_free((AVPacket**)&pack);
+        pack.Drop();
 
         packMutex.unlock();
     }

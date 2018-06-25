@@ -46,8 +46,8 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
     vDecode->Start();
     aDecode->Start();
 
-//    XSleep(3000);
-//    demux->Stop();
+    XSleep(3000);
+    demux->Stop();
 
 //    for (;;)
 //    {
