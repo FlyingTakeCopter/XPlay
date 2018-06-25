@@ -36,7 +36,8 @@ bool FFDecode::Open(XParameter p) {
     }
     // 设置流类型
     isAudio = (codec->type == AVMEDIA_TYPE_AUDIO);
-
+    // 初始化frame内存，RecvFrame中会用到
+    frame = av_frame_alloc();
     XLOGI("avcodec_open2 success");
     return true;
 }
@@ -61,7 +62,9 @@ XData FFDecode::RecvFrame() {
     }
     XData d;
     d.data = (unsigned char *) frame;
-    if (codecxt->codec_type == AVMEDIA_TYPE_VIDEO)
-        d.size = (frame->linesize[0] + frame->linesize[1] + frame->linesize[2]) * frame->height;// (Y + U + V)一行总大小 * 高度
+    if (codecxt->codec_type == AVMEDIA_TYPE_VIDEO)  // 视频总大小： (Y + U + V)单行总大小 * 高度
+        d.size = (frame->linesize[0] + frame->linesize[1] + frame->linesize[2]) * frame->height;
+    else    //音频总大小: 单声道字节数 * 单声道总帧数 * 声道数
+        d.size = av_get_bytes_per_sample((AVSampleFormat) frame->format) * frame->nb_samples * 2;
     return d;
 }

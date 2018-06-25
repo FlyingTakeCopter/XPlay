@@ -43,6 +43,9 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
     demux->AddObs(aDecode);
 
     demux->Start();// 线程读取，读取出一帧Notify到各观察者
+    vDecode->Start();
+    aDecode->Start();
+
 //    XSleep(3000);
 //    demux->Stop();
 

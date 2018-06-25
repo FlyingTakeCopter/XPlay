@@ -14,7 +14,7 @@ struct AVFrame;
 class FFDecode : public IDecode {
 public:
     virtual bool Open(XParameter p);
-
+    // 发送数据解码，内有判空处理
     virtual bool SendPacket(XData pkt);
 
     virtual XData RecvFrame();
