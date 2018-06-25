@@ -7,7 +7,12 @@
 
 
 class XShader {
+public:
+    virtual bool Init();
 
+protected:
+    unsigned int vsh;
+    unsigned int fsh;
 };
 
 

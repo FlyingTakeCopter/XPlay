@@ -6,6 +6,7 @@
 #include "IDecode.h"
 #include "FFDecode.h"
 #include "XEGL.h"
+#include "XShader.h"
 #include <android/native_window_jni.h>
 
 // 观察者测试类
@@ -67,4 +68,7 @@ Java_xplay_xplay_XPlay_InitView(JNIEnv *env, jobject instance, jobject surface) 
     ANativeWindow*awin = ANativeWindow_fromSurface(env ,surface);
 
     XEGL::GetInstance()->Init(awin);
+
+    XShader shader;
+    shader.Init();
 }
