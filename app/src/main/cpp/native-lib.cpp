@@ -5,6 +5,7 @@
 #include "XLog.h"
 #include "IDecode.h"
 #include "FFDecode.h"
+#include <android/native_window_jni.h>
 
 // 观察者测试类
 class TestObs : public IObserver
@@ -57,4 +58,11 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
 
 
     return env->NewStringUTF(hello.c_str());
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_xplay_xplay_XPlay_InitView(JNIEnv *env, jobject instance, jobject surface) {
+
+    ANativeWindow*awin = ANativeWindow_fromSurface(env ,surface);
+
 }

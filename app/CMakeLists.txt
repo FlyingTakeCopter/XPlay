@@ -6,6 +6,7 @@ set(CPATH ${CMAKE_CURRENT_SOURCE_DIR}/src/main/cpp)
 add_library(native-lib
              SHARED
              ${CPATH}/native-lib.cpp
+             #decode
               ${CPATH}/IDemux.cpp
               ${CPATH}/FFDemux.cpp
               ${CPATH}/XData.cpp
@@ -15,6 +16,12 @@ add_library(native-lib
               ${CPATH}/IDecode.cpp
               ${CPATH}/FFDecode.cpp
               ${CPATH}/XParameter.cpp
+              #video view
+              ${CPATH}/IVideoView.cpp
+              ${CPATH}/GLVideoView.cpp
+              ${CPATH}/XTexture.cpp
+              ${CPATH}/XEGL.cpp
+              ${CPATH}/XShader.cpp
 
 
               )
