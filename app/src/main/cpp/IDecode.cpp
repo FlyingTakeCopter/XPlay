@@ -3,3 +3,11 @@
 //
 
 #include "IDecode.h"
+
+void IDecode::Update(XData data) {
+
+}
+
+void IDecode::Main() {
+
+}

@@ -34,6 +34,9 @@ bool FFDecode::Open(XParameter p) {
         XLOGE("avcodec_open2 failed reason %s", buf);
         return false;
     }
+    // 设置流类型
+    isAudio = (codec->type == AVMEDIA_TYPE_AUDIO);
+
     XLOGI("avcodec_open2 success");
     return true;
 }

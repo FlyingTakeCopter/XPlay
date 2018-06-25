@@ -30,15 +30,22 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
     IDemux* demux = new FFDemux();
     demux->Open("sdcard/ffmpegtest/1080.mp4");
 
-    TestObs* testObs = new TestObs();
-    demux->AddObs(testObs);
+//    TestObs* testObs = new TestObs();
+//    demux->AddObs(testObs);
+    // 创建视频解码器
+    IDecode*vDecode = new FFDecode();
+    vDecode->Open(demux->GetVParameter());
+    // 创建音频解码器
+    IDecode*aDecode = new FFDecode();
+    aDecode->Open(demux->GetAParameter());
+    // 添加视频/音频解码器为demux的观察者
+    demux->AddObs(vDecode);
+    demux->AddObs(aDecode);
 
-    IDecode*decode = new FFDecode();
-    decode->Open(demux->GetVParameter());
+    demux->Start();// 线程读取，读取出一帧Notify到各观察者
+//    XSleep(3000);
+//    demux->Stop();
 
-    demux->Start();
-    XSleep(3000);
-    demux->Stop();
 //    for (;;)
 //    {
 //        XData data = demux->Read();
