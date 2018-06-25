@@ -59,7 +59,7 @@ void IDecode::Main() {
                 //XLOGI("RecvFrame()");
 
                 if (!frame.data) break;
-                XLOGI("RecvFrame size %d", frame.size);
+                //XLOGI("RecvFrame size %d", frame.size);
                 // 通知到所有观察者
                 this->Notify(frame);
             }

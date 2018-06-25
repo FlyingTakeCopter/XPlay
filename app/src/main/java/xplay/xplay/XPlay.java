@@ -16,6 +16,7 @@ public class XPlay extends GLSurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        InitView(holder.getSurface());
     }
 
     @Override

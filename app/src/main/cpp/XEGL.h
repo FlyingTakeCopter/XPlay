@@ -10,8 +10,10 @@ class XEGL {
 public:
     virtual bool Init(void*win) = 0;
     static XEGL* GetInstance();
+
 protected:
     XEGL(){}
+
 };
 
 
