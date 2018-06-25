@@ -8,6 +8,7 @@
 extern "C"
 {
 #include <libavcodec/avcodec.h>
+#include <libavutil/frame.h>
 }
 
 bool FFDecode::Open(XParameter p) {
@@ -35,4 +36,29 @@ bool FFDecode::Open(XParameter p) {
     }
     XLOGI("avcodec_open2 success");
     return true;
+}
+
+bool FFDecode::SendPacket(XData pkt) {
+    if (!pkt.data) return false;
+    int res = avcodec_send_packet(codecxt, (const AVPacket *) pkt.data);
+    if (res != 0)
+    {
+        return false;
+    }
+    return true;
+}
+
+XData FFDecode::RecvFrame() {
+    if (!codecxt)
+        return XData();
+    int res = avcodec_receive_frame(codecxt, frame);
+    if (res != 0)
+    {
+        return  XData();
+    }
+    XData d;
+    d.data = (unsigned char *) frame;
+    if (codecxt->codec_type == AVMEDIA_TYPE_VIDEO)
+        d.size = (frame->linesize[0] + frame->linesize[1] + frame->linesize[2]) * frame->height;// (Y + U + V)一行总大小 * 高度
+    return d;
 }

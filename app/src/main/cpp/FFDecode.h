@@ -9,13 +9,19 @@
 #include "IDecode.h"
 
 struct AVCodecContext;
+struct AVFrame;
 
 class FFDecode : public IDecode {
 public:
-    bool Open(XParameter p) override;
+    virtual bool Open(XParameter p);
+
+    virtual bool SendPacket(XData pkt);
+
+    virtual XData RecvFrame();
 
 protected:
     AVCodecContext*codecxt;
+    AVFrame*frame;
 };
 
 
