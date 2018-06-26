@@ -84,6 +84,15 @@ public:
         return true;
     }
 
+    virtual void Draw() {
+        if (surface == EGL_NO_SURFACE || display == EGL_NO_DISPLAY)
+        {
+            return;
+        }
+        // 窗口显示
+        eglSwapBuffers(display, surface);
+    }
+
 };
 
 XEGL *XEGL::GetInstance() {

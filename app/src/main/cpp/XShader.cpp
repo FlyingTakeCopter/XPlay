@@ -42,7 +42,8 @@ static const char* fragYUV420P = GET_STR(
 );
 
 // 着色器初始化
-GLuint InitShader(const char* code, GLint type){
+GLuint InitShader(const char* code, GLint type)
+{
     // 创建shader
     GLuint sh = glCreateShader(type);
     if (sh == 0)
@@ -70,7 +71,8 @@ GLuint InitShader(const char* code, GLint type){
     return sh;
 }
 
-bool XShader::Init() {
+bool XShader::Init()
+{
     XLOGI("XShader Init() Start");
 
     ////////////////////////////////////////////////////
@@ -81,7 +83,7 @@ bool XShader::Init() {
 
     ////////////////////////////////////////////////////
     // 创建渲染程序
-    GLint program = glCreateProgram();
+    program = glCreateProgram();
     if (program == 0)
     {
         XLOGE("glCreateProgram failed");
@@ -135,4 +137,45 @@ bool XShader::Init() {
 
     XLOGI("XShader Init() Success");
     return true;
+}
+
+void XShader::GetTexture(unsigned int index, int width, int height, unsigned char *buf)
+{
+    if (txts[index] == 0)
+    {
+        // 材质初始化
+        glGenTextures(1,&txts[index]);
+
+        //设置纹理属性
+        glBindTexture(GL_TEXTURE_2D, txts[index]);
+        //缩小过滤器
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+        //设置文理的格式和大小
+        glTexImage2D(GL_TEXTURE_2D,
+                    0,                 //细节基本 默认0
+                    GL_LUMINANCE,     //gpu内部格式 亮度、灰度图
+                    width,height,      //拉伸到全屏
+                    0,                 //边框
+                    GL_LUMINANCE,     //数据的像素格式 亮度、灰度图 要与上面一致
+                    GL_UNSIGNED_BYTE, //像素的数据类型
+                    NULL                //纹理的数据
+        );
+    }
+
+    // 激活第一层，绑定到创建的opengl纹理
+    glActiveTexture(GL_TEXTURE0+index);
+    glBindTexture(GL_TEXTURE_2D, txts[index]);
+    // 替换纹理内存
+    glTexSubImage2D(GL_TEXTURE_2D,0,0,0,width,height,GL_LUMINANCE,GL_UNSIGNED_BYTE,buf);
+}
+
+void XShader::Draw()
+{
+    if (!program)
+    {
+        return;
+    }
+    //三维绘制
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }

@@ -7,6 +7,8 @@
 #include "FFDecode.h"
 #include "XEGL.h"
 #include "XShader.h"
+#include "IVideoView.h"
+#include "GLVideoView.h"
 #include <android/native_window_jni.h>
 
 // 观察者测试类
@@ -19,6 +21,8 @@ public:
     }
 
 };
+
+IVideoView*view = 0;
 
 extern "C"
 JNIEXPORT jstring
@@ -45,12 +49,15 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
     demux->AddObs(vDecode);
     demux->AddObs(aDecode);
 
+    view = new GLVideoView();
+    vDecode->AddObs(view);//GLVideoView作为视频解码器的观察者
+
     demux->Start();// 线程读取，读取出一帧Notify到各观察者
     vDecode->Start();
     aDecode->Start();
 
-    XSleep(3000);
-    demux->Stop();
+//    XSleep(3000);
+//    demux->Stop();
 
 //    for (;;)
 //    {
@@ -66,9 +73,9 @@ JNIEXPORT void JNICALL
 Java_xplay_xplay_XPlay_InitView(JNIEnv *env, jobject instance, jobject surface) {
 
     ANativeWindow*awin = ANativeWindow_fromSurface(env ,surface);
-
-    XEGL::GetInstance()->Init(awin);
-
-    XShader shader;
-    shader.Init();
+    view->SetRender(awin);
+//    XEGL::GetInstance()->Init(awin);
+//
+//    XShader shader;
+//    shader.Init();
 }

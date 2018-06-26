@@ -62,8 +62,14 @@ XData FFDecode::RecvFrame() {
     }
     XData d;
     d.data = (unsigned char *) frame;
-    if (codecxt->codec_type == AVMEDIA_TYPE_VIDEO)  // 视频总大小： (Y + U + V)单行总大小 * 高度
+    if (codecxt->codec_type == AVMEDIA_TYPE_VIDEO)
+    {
+        // 视频总大小： (Y + U + V)单行总大小 * 高度
         d.size = (frame->linesize[0] + frame->linesize[1] + frame->linesize[2]) * frame->height;
+        d.width = frame->width;d.height = frame->height;
+        // 内存拷贝
+        memcpy(d.datas, frame->data, sizeof(d.datas));
+    }
     else    //音频总大小: 单声道字节数 * 单声道总帧数 * 声道数
         d.size = av_get_bytes_per_sample((AVSampleFormat) frame->format) * frame->nb_samples * 2;
     return d;

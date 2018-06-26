@@ -5,5 +5,9 @@
 #include "IVideoView.h"
 
 void IVideoView::Update(XData data) {
-
+    if(data.isAudio || data.size ==0)
+    {
+        return;
+    }
+    Render(data);
 }

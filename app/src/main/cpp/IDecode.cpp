@@ -60,7 +60,7 @@ void IDecode::Main() {
 
                 if (!frame.data) break;
                 //XLOGI("RecvFrame size %d", frame.size);
-                // 通知到所有观察者
+                // 通知到所有观察者(GLVideoView 和 )
                 this->Notify(frame);
             }
         }

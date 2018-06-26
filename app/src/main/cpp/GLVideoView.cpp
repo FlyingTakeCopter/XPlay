@@ -11,12 +11,20 @@ void GLVideoView::SetRender(void *win) {
 }
 
 void GLVideoView::Render(XData data) {
-    XLOGI("GLVideoView::Render Start");
-    if(!view) return;
+//    XLOGI("GLVideoView::Render Start");
+    if(!view)
+    {
+        XLOGE("view is null");
+        return;
+    }
     if(!texture)
     {
         texture = XTexture::Create();
-        texture->Init(view);
+        if(!texture->Init(view))
+        {
+            return;
+        }
     }
-    XLOGI("GLVideoView::Render Success");
+    texture->Draw(data.datas, data.width, data.height);
+//    XLOGI("GLVideoView::Render Success");
 }

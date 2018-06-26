@@ -7,9 +7,12 @@
 #include "XShader.h"
 #include "XLog.h"
 
+// CXTexture 存在cpp内部，并不对外暴露
 class CXTexture : public XTexture
 {
 public:
+    XShader shader;
+
     virtual bool Init(void *win) {
         XLOGI("CXTexture Init() Start");
         if(!win)
@@ -21,13 +24,23 @@ public:
         if(!XEGL::GetInstance()->Init(win))
             return false;
 
-        XShader shader;
         if(shader.Init())
             return false;
 
         XLOGI("CXTexture Init() Success");
 
         return true;
+    }
+
+    virtual void Draw(unsigned char* data[], int width, int height) {
+        // 设置三个材质
+        shader.GetTexture(0,width,height,data[0]);//Y
+        shader.GetTexture(1,width/2,height/2,data[1]);//U
+        shader.GetTexture(2,width/2,height/2,data[2]);//V
+        // opengl绘制
+        shader.Draw();
+        // egl绘制
+        XEGL::GetInstance()->Draw();
     }
 };
 
