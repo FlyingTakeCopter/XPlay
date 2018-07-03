@@ -120,6 +120,7 @@ XParameter FFDemux::GetAParameter() {
 
     XParameter parameter;
     parameter.para = ic->streams[res]->codecpar;
-
+    parameter.channels = ic->streams[res]->codecpar->channels;
+    parameter.sample_rate = ic->streams[res]->codecpar->sample_rate;
     return parameter;
 }

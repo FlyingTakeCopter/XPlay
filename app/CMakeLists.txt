@@ -25,7 +25,8 @@ add_library(native-lib
               #audio
               ${CPATH}/IResample.cpp
               ${CPATH}/FFResample.cpp
-
+              ${CPATH}/IAudioPlay.cpp
+              ${CPATH}/SLAudioPlay.cpp
 
 
               )

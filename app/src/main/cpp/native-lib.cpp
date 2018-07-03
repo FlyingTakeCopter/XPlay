@@ -11,6 +11,8 @@
 #include "GLVideoView.h"
 #include "IResample.h"
 #include "FFResample.h"
+#include "IAudioPlay.h"
+#include "SLAudioPlay.h"
 #include <android/native_window_jni.h>
 
 // 观察者测试类
@@ -57,8 +59,13 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
 
     //创建重采样类并添加为，音频解码器的观察者
     IResample*resample = new FFResample();
-    resample->Open(demux->GetAParameter());
+    XParameter outP = demux->GetAParameter();
+    resample->Open(demux->GetAParameter(), outP);
     aDecode->AddObs(resample);
+
+    IAudioPlay*audioPlay = new SLAudioPlay();
+    audioPlay->StartPlay(outP);
+    resample->AddObs(audioPlay);
 
     demux->Start();// 线程读取，读取出一帧Notify到各观察者
     vDecode->Start();

@@ -10,6 +10,8 @@ struct AVCodecParameters;
 class XParameter {
 public:
     AVCodecParameters*para;
+    int channels = 2;
+    int sample_rate = 44100;
 };
 
 
