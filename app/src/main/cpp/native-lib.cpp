@@ -64,8 +64,8 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
     aDecode->AddObs(resample);
 
     IAudioPlay*audioPlay = new SLAudioPlay();
-    audioPlay->StartPlay(outP);
     resample->AddObs(audioPlay);
+    audioPlay->StartPlay(outP);
 
     demux->Start();// 线程读取，读取出一帧Notify到各观察者
     vDecode->Start();

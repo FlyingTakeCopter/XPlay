@@ -3,7 +3,26 @@
 //
 
 #include "IAudioPlay.h"
+#include "XLog.h"
 
 void IAudioPlay::Update(XData data) {
-    // 压入缓冲队列
+    XLOGI("IAudioPlay::Update %d", data.size);
+    if (data.size <= 0 || !data.data)
+        return;
+
+    while(!isExit)
+    {
+        // 压入缓冲队列, 队列满了阻塞
+        frameMutex.lock();
+        if (frames.size() > 100)
+        {
+            frameMutex.unlock();
+            XSleep(1);
+            continue;
+        }
+        frames.push_back(data);
+        frameMutex.unlock();
+        break;
+    }
+
 }
