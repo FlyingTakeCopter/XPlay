@@ -5,15 +5,21 @@
 #ifndef XPLAY_XDATA_H
 #define XPLAY_XDATA_H
 
+enum XDataType{
+    AVPACKET_TYPE = 0,
+    UCHAR_TYPE = 1,
+};
 
 struct XData {
 public:
+    XDataType type = AVPACKET_TYPE;
     unsigned char* data = 0;// 指针地址
     unsigned char* datas[8] = {0};// 实际数据
     int width = 0;  // 当前帧宽高
     int height = 0; // 当前帧宽高
     int size = 0;
-    void Drop();
+    bool Alloc(int size, const char* data = 0);//分配空间,用于音频拷贝
+    void Drop();//释放空间
     bool isAudio = false;
 };
 

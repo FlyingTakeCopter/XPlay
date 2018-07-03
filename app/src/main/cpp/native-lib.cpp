@@ -9,6 +9,8 @@
 #include "XShader.h"
 #include "IVideoView.h"
 #include "GLVideoView.h"
+#include "IResample.h"
+#include "FFResample.h"
 #include <android/native_window_jni.h>
 
 // 观察者测试类
@@ -49,8 +51,14 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
     demux->AddObs(vDecode);
     demux->AddObs(aDecode);
 
+    //GLVideoView作为视频解码器的观察者
     view = new GLVideoView();
-    vDecode->AddObs(view);//GLVideoView作为视频解码器的观察者
+    vDecode->AddObs(view);
+
+    //创建重采样类并添加为，音频解码器的观察者
+    IResample*resample = new FFResample();
+    resample->Open(demux->GetAParameter());
+    aDecode->AddObs(resample);
 
     demux->Start();// 线程读取，读取出一帧Notify到各观察者
     vDecode->Start();

@@ -13,6 +13,8 @@ class FFResample : public IResample {
 public:
     virtual bool Open(XParameter in, XParameter out);
 
+    virtual XData Resample(XData inData);
+
 private:
     SwrContext*actx;
 };
