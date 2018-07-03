@@ -22,6 +22,10 @@ add_library(native-lib
               ${CPATH}/XTexture.cpp
               ${CPATH}/XEGL.cpp
               ${CPATH}/XShader.cpp
+              #audio
+              ${CPATH}/IResample.cpp
+              ${CPATH}/FFResample.cpp
+
 
 
               )
