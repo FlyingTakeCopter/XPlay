@@ -11,8 +11,14 @@
 
 class SLAudioPlay : public IAudioPlay{
 public:
+    SLAudioPlay();
+    virtual ~SLAudioPlay();
+
     virtual bool StartPlay(XParameter out);
     void PlayCall(void *bufq);
+
+protected:
+    unsigned char* buf = 0;//用来临时存储播放的data,在播放的回调函数中调用
 };
 
 

@@ -5,6 +5,28 @@
 #include "IAudioPlay.h"
 #include "XLog.h"
 
+XData IAudioPlay::GetData() {
+    XData d;
+
+    while (!isExit)
+    {
+        frameMutex.lock();
+
+        if (!frames.empty())
+        {
+            d = frames.front();
+            frames.pop_front();
+            frameMutex.unlock();
+            return d;
+        }
+
+        frameMutex.unlock();
+        XSleep(1);
+    }
+
+    return d;
+}
+
 void IAudioPlay::Update(XData data) {
     XLOGI("IAudioPlay::Update %d", data.size);
     if (data.size <= 0 || !data.data)
@@ -26,3 +48,4 @@ void IAudioPlay::Update(XData data) {
     }
 
 }
+

@@ -25,11 +25,35 @@ static SLEngineItf CreateSL()
     return en;
 }
 
+SLAudioPlay::SLAudioPlay() {
+    buf = new unsigned char[1024 * 1024];//申请1M内存
+}
+
+SLAudioPlay::~SLAudioPlay() {
+    delete buf;
+    buf = 0;
+}
+
 void SLAudioPlay::PlayCall(void *bufq)
 {
     if(!bufq)return;
     SLAndroidSimpleBufferQueueItf bf = (SLAndroidSimpleBufferQueueItf)bufq;
-    XLOGE("SLAudioPlay::PlayCall");
+    XLOGI("SLAudioPlay::PlayCall");
+    // 阻塞
+    XData d = GetData();
+    if (d.size <= 0)
+    {
+        XLOGE("PlayCall GetData d.size == 0");
+        return;
+    }
+
+    if (!buf)
+        return;
+
+    memcpy(buf, d.data, (size_t) d.size);    // 拷贝到buf中防止 XData后面释放后d.data为空
+
+    (*bf)->Enqueue(bf, buf, (SLuint32) d.size);
+    d.Drop();
 }
 
 static void PcmCall(SLAndroidSimpleBufferQueueItf bf,void *contex)
@@ -129,3 +153,5 @@ bool SLAudioPlay::StartPlay(XParameter out)
     XLOGI("SLAudioPlay::StartPlay success!");
     return true;
 }
+
+
