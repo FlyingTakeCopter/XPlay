@@ -18,6 +18,7 @@ public:
     int width = 0;  // 当前帧宽高
     int height = 0; // 当前帧宽高
     int size = 0;
+    int format = 0;//标识软硬解 解码出的数据类型
     bool Alloc(int size, const char* data = 0);//分配空间,用于音频拷贝
     void Drop();//释放空间
     bool isAudio = false;

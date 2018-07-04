@@ -20,7 +20,7 @@ void GLVideoView::Render(XData data) {
     if(!texture)
     {
         texture = XTexture::Create();
-        if(!texture->Init(view))
+        if(!texture->Init(view, (XTextureType) data.format))    //传入解码出来的格式(软硬解码器出来的格式不同)
         {
             return;
         }

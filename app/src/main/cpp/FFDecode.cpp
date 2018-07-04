@@ -9,14 +9,25 @@ extern "C"
 {
 #include <libavcodec/avcodec.h>
 #include <libavutil/frame.h>
+#include <libavcodec/jni.h>
 }
 
-bool FFDecode::Open(XParameter p) {
+void FFDecode::InitHard(JavaVM *vm) {
+    av_jni_set_java_vm(vm,0);
+}
+
+bool FFDecode::Open(XParameter p, bool isHard) {
     if(!p.para)
         return false;
     AVCodecParameters*parameters = p.para;
     //查找解码器
     AVCodec*codec = avcodec_find_decoder(parameters->codec_id);
+    //硬解码
+    if (isHard)
+    {
+        codec = avcodec_find_decoder_by_name("h264_mediacodec");
+    }
+
     if (!codec)
     {
         XLOGE("avcodec_find_decoder failed %d", parameters->codec_id);
@@ -67,10 +78,16 @@ XData FFDecode::RecvFrame() {
         // 视频总大小： (Y + U + V)单行总大小 * 高度
         d.size = (frame->linesize[0] + frame->linesize[1] + frame->linesize[2]) * frame->height;
         d.width = frame->width;d.height = frame->height;
-        // 内存拷贝
-        memcpy(d.datas, frame->data, sizeof(d.datas));
+
     }
     else    //音频总大小: 单声道字节数 * 单声道总帧数 * 声道数
         d.size = av_get_bytes_per_sample((AVSampleFormat) frame->format) * frame->nb_samples * 2;
+    //标识YUV420P和NV21,解码之后能准确知道格式
+    d.format = frame->format;
+    // 内存拷贝
+    memcpy(d.datas, frame->data, sizeof(d.datas));
+
     return d;
 }
+
+

@@ -26,6 +26,14 @@ public:
 
 };
 
+extern "C"
+JNIEXPORT
+jint JNI_OnLoad(JavaVM *vm,void *res)
+{
+    FFDecode::InitHard(vm);
+    return JNI_VERSION_1_4;
+}
+
 IVideoView*view = 0;
 
 extern "C"
@@ -45,7 +53,7 @@ Java_xplay_xplay_MainActivity_stringFromJNI(
 //    demux->AddObs(testObs);
     // 创建视频解码器
     IDecode*vDecode = new FFDecode();
-    vDecode->Open(demux->GetVParameter());
+    vDecode->Open(demux->GetVParameter(), true);// true采用硬解码
     // 创建音频解码器
     IDecode*aDecode = new FFDecode();
     aDecode->Open(demux->GetAParameter());

@@ -28,7 +28,7 @@ XData IAudioPlay::GetData() {
 }
 
 void IAudioPlay::Update(XData data) {
-    XLOGI("IAudioPlay::Update %d", data.size);
+//    XLOGI("IAudioPlay::Update %d", data.size);
     if (data.size <= 0 || !data.data)
         return;
 
