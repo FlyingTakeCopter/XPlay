@@ -49,7 +49,7 @@ bool FFDecode::Open(XParameter p, bool isHard) {
     isAudio = (codec->type == AVMEDIA_TYPE_AUDIO);
     // 初始化frame内存，RecvFrame中会用到
     frame = av_frame_alloc();
-    XLOGI("avcodec_open2 success");
+    XLOGI("FFDecode::Open success");
     return true;
 }
 

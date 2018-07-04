@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         );
         //屏幕为横屏
         setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE );
-
+//        setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
 
         setContentView(R.layout.activity_main);
 

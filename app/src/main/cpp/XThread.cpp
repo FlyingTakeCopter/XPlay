@@ -13,10 +13,11 @@ void XSleep(int ms){
 }
 
 
-void XThread::Start() {
+bool XThread::Start() {
     isExit = false;
     thread th(&XThread::ThreadMain, this);
     th.detach();// 移除当前线程对新建线程的控制，否自会资源访问冲突
+    return true;
 }
 
 void XThread::ThreadMain() {

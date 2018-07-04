@@ -13,7 +13,12 @@ extern "C"
 
 bool FFResample::Open(XParameter in, XParameter out) {
 
-    XLOGI("FFResample Open start");
+    if (!in.para || !out.para)
+    {
+        XLOGE("FFResample Open failed in|out is null");
+        return false;
+    }
+//    XLOGI("FFResample Open start");
     // 初始化重采样参数
     actx = swr_alloc();
     actx = swr_alloc_set_opts(actx,
@@ -33,7 +38,7 @@ bool FFResample::Open(XParameter in, XParameter out) {
     }
     outChannels = in.para->channels;
     outFormat = AV_SAMPLE_FMT_S16;
-    XLOGI("swr_init success");
+    XLOGI("FFResample::Open success");
     return true;
 }
 

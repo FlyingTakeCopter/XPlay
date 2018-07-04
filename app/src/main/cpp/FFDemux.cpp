@@ -32,7 +32,7 @@ bool FFDemux::Open(const char *url) {
         return false;
     }
     this->totalms = ic->duration / (AV_TIME_BASE / 1000);
-    XLOGI("total ms = %d", this->totalms);
+    //XLOGI("total ms = %d", this->totalms);
 
     GetVParameter();
     GetAParameter();

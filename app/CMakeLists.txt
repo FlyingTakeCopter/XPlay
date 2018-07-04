@@ -27,6 +27,8 @@ add_library(native-lib
               ${CPATH}/FFResample.cpp
               ${CPATH}/IAudioPlay.cpp
               ${CPATH}/SLAudioPlay.cpp
+              #IPlayer
+              ${CPATH}/IPlayer.cpp
 
 
               )

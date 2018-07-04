@@ -11,7 +11,7 @@ void XSleep(int ms);
 class XThread {
 public:
     // 启动线程
-    virtual void Start();
+    virtual bool Start();
     // 安全停止线程，通过控制isExit参数，不一定退出成功
     virtual void Stop();
     // 线程主函数，用于子类重载
