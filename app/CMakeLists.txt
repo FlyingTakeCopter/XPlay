@@ -29,6 +29,10 @@ add_library(native-lib
               ${CPATH}/SLAudioPlay.cpp
               #IPlayer
               ${CPATH}/IPlayer.cpp
+              #IPlayerBuilder
+              ${CPATH}/IPlayerBuilder.cpp
+              ${CPATH}/FFPlayerBuilder.cpp
+
 
 
               )
