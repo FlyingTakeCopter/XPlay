@@ -32,6 +32,8 @@ add_library(native-lib
               #IPlayerBuilder
               ${CPATH}/IPlayerBuilder.cpp
               ${CPATH}/FFPlayerBuilder.cpp
+              #IPlyerProxy
+              ${CPATH}/IPlayerProxy.cpp
 
 
 
