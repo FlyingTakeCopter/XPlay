@@ -69,6 +69,7 @@ XData FFResample::Resample(XData inData) {
         return XData();
     }
 
+    out.pts = inData.pts;
 //    XLOGI("swr_convert success len = %d", len);
 //    XLOGI("swr_convert success data.size = %d", out.size);
     return out;

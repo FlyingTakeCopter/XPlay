@@ -14,16 +14,19 @@ XData IAudioPlay::GetData() {
 
         if (!frames.empty())
         {
+            // 获取数据成功
             d = frames.front();
             frames.pop_front();
             frameMutex.unlock();
+
+            pts = d.pts;// 记录音频的pts用于给视频做同步
             return d;
         }
 
         frameMutex.unlock();
         XSleep(1);
     }
-
+    // 获取数据失败
     return d;
 }
 

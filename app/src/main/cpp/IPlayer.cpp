@@ -15,18 +15,41 @@ IPlayer *IPlayer::Get(unsigned char index) {
     return &p[index];
 }
 
+void IPlayer::Main() {
+    while (!isExit)
+    {
+        mutex.lock();
+        if (!audioPlay || !vDecode)
+        {
+            mutex.unlock();
+            XSleep(2);
+            continue;
+        }
+        //同步
+        //获取音频的PTS,告诉视频加码器来做同步
+        int apts = audioPlay->pts;
+//        XLOGI("IPlayer::Main pts = %d", apts);
+        vDecode->synPts = apts;
+
+        mutex.unlock();
+        XSleep(2);
+    }
+}
+
 bool IPlayer::Open(const char *path) {
+    mutex.lock();
 
     XLOGI("IPlayer::Open path %s", path);
 
     if (!demux || !demux->Open(path))
     {
+        mutex.unlock();
         XLOGE("IPlayer::Open demux->Open failed!");
         return false;
     }
 
     // 如果解封装之后就是原始数据，并不需要解码
-    if (!vDecode || !vDecode->Open(demux->GetVParameter(), true))
+    if (!vDecode || !vDecode->Open(demux->GetVParameter(), false))
     {
         XLOGE("IPlayer::Open vDecode failed!");
 //        return false;
@@ -49,13 +72,17 @@ bool IPlayer::Open(const char *path) {
 
 
     XLOGI("IPlayer::Open success");
-
+    mutex.unlock();
     return true;
 }
 
 bool IPlayer::Start() {
+    mutex.lock();
+
     if (!demux || !demux->Start())
     {
+        mutex.unlock();
+
         XLOGE("IPlayer::Start demux failed!");
         return false;
     }
@@ -69,6 +96,8 @@ bool IPlayer::Start() {
     if (vDecode)
         vDecode->Start();
 
+    XThread::Start();//启动IPlayer::Main()
+    mutex.unlock();
     return true;
 }
 
@@ -76,4 +105,5 @@ void IPlayer::InitView(void *win) {
     if (videoView)
         videoView->SetRender(win);
 }
+
 

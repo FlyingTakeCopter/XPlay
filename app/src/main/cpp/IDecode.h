@@ -21,7 +21,10 @@ public:
     virtual XData RecvFrame() = 0;
     // 对应IDemux::Main的Notify，生产者：将传入的XData加入解码队列尾部
     virtual void Update(XData data);
-
+    // 同步时间，再次打开文件需要清理
+    int synPts = 0;
+    // 记录当前视频已解码到的帧的frame
+    int vPts = 0;
 protected:
     // 解码主函数,从解码队列头部取数据进行解码，解码完成通知各观察者
     virtual void Main();

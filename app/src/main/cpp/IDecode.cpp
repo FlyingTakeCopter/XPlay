@@ -35,6 +35,19 @@ void IDecode::Main() {
     while (!isExit)
     {
         packMutex.lock();
+
+        // 视频解码器同步到音频pts
+        if (!isAudio && synPts > 0)
+        {
+            if (synPts < vPts)
+            {
+                // 当前音频的pts小于当前解码出的视频的pts,要等待音频播放完视频才可以继续解码
+                packMutex.unlock();
+                XSleep(1);
+                continue;
+            }
+        }
+
         if (packs.empty())
         {
             packMutex.unlock();
@@ -59,6 +72,7 @@ void IDecode::Main() {
                 //XLOGI("RecvFrame()");
 
                 if (!frame.data) break;
+                vPts = frame.pts;   // 记录当前freame的pts
                 //XLOGI("RecvFrame size %d", frame.size);
                 // 通知到所有观察者(GLVideoView 和 )
                 this->Notify(frame);

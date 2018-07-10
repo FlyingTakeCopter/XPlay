@@ -86,6 +86,8 @@ XData FFDecode::RecvFrame() {
     d.format = frame->format;
     // 内存拷贝
     memcpy(d.datas, frame->data, sizeof(d.datas));
+    // pts赋值
+    d.pts = (int) frame->pts;
 
     return d;
 }

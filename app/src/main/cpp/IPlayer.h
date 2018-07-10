@@ -6,6 +6,7 @@
 #define XPLAY_IPLAYER_H
 
 #include <ctime>
+#include <mutex>
 #include "XThread.h"
 #include "XParameter.h"
 
@@ -14,6 +15,8 @@ class IDecode;
 class IResample;
 class IAudioPlay;
 class IVideoView;
+
+//使用IPlayer来同步音频与视频
 
 class IPlayer : public XThread {
 public:
@@ -35,6 +38,10 @@ public:
     XParameter outP;
 protected:
     IPlayer(){};
+    // 开个线程用于音视频同步
+    virtual void Main();
+
+    std::mutex mutex;
 };
 
 

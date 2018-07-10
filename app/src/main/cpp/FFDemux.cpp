@@ -10,6 +10,11 @@ extern "C"
 #include "libavformat/avformat.h"
 }
 
+static double r2d(AVRational rational)
+{
+    return rational.den == 0 || rational.num == 0 ? 0 : (double)rational.num / (double)rational.den;
+}
+
 bool FFDemux::Open(const char *url) {
     // 打开url
     int res = avformat_open_input(&ic, url, 0, 0);
@@ -70,6 +75,11 @@ XData FFDemux::Read() {
         av_packet_free(&pkt);   // 失败释放pkt防止内存泄漏
         return XData();
     }
+
+    // 转换PTS,记录到XData
+    pkt->pts = pkt->pts * (1000 * r2d(ic->streams[pkt->stream_index]->time_base));
+    pkt->dts = pkt->dts * (1000 * r2d(ic->streams[pkt->stream_index]->time_base));
+    d.pts = (int) pkt->pts;
 
     return d;
 }

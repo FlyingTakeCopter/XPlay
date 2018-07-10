@@ -13,6 +13,7 @@ enum XDataType{
 struct XData {
 public:
     XDataType type = AVPACKET_TYPE;
+    int pts = 0;    // 记录当前frame的pts用于音视频同步，同步方法视频同步到音频
     unsigned char* data = 0;// 指针地址
     unsigned char* datas[8] = {0};// 实际数据
     int width = 0;  // 当前帧宽高

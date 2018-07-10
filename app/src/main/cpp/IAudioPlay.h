@@ -19,6 +19,8 @@ public:
     virtual bool StartPlay(XParameter out) = 0;
 
     int maxFrame = 100;//最大缓冲 单位：帧
+
+    int pts;
 protected:
     std::list<XData> frames;
     std::mutex frameMutex;
