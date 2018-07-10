@@ -81,6 +81,25 @@ static const char *fragNV21 = GET_STR(
         }
 );
 
+void XShader::Close() {
+    mutex.lock();
+
+    if (program)
+        glDeleteProgram(program);
+    if (fsh)
+        glDeleteShader(fsh);
+    if (vsh)
+        glDeleteShader(vsh);
+
+    for (int i = 0; i < sizeof(txts)/ sizeof(unsigned int); ++i) {
+        if (txts[i])
+            glDeleteTextures(1, &txts[i]);
+        txts[i] = 0;
+    }
+
+    mutex.unlock();
+}
+
 // 着色器初始化
 GLuint InitShader(const char* code, GLint type)
 {
@@ -113,8 +132,10 @@ GLuint InitShader(const char* code, GLint type)
 
 bool XShader::Init(XShaderType type)
 {
-    XLOGI("XShader Init() Start");
+    Close();
 
+    XLOGI("XShader Init() Start");
+    mutex.lock();
     ////////////////////////////////////////////////////
     //顶点和片元shader初始化
     vsh = InitShader(vertexShader, GL_VERTEX_SHADER);
@@ -150,6 +171,7 @@ bool XShader::Init(XShaderType type)
     if (fsh == 0)
     {
         XLOGE("XShader::Init failed");
+        mutex.unlock();
         return false;
     }
 
@@ -159,6 +181,7 @@ bool XShader::Init(XShaderType type)
     if (program == 0)
     {
         XLOGE("glCreateProgram failed");
+        mutex.unlock();
         return false;
     }
     //绑定shader到渲染程序
@@ -171,6 +194,7 @@ bool XShader::Init(XShaderType type)
     if (status != GL_TRUE)
     {
         XLOGE("glLinkProgram failed");
+        mutex.unlock();
         return false;
     }
     glUseProgram(program);
@@ -222,6 +246,7 @@ bool XShader::Init(XShaderType type)
     }
 
     XLOGI("初始化 XShader Init() 成功");
+    mutex.unlock();
     return true;
 }
 
@@ -230,6 +255,7 @@ void XShader::GetTexture(unsigned int index, int width, int height, unsigned cha
     unsigned int format =GL_LUMINANCE;
     if(isa)
         format = GL_LUMINANCE_ALPHA;
+    mutex.lock();
     if (txts[index] == 0)
     {
         // 材质初始化
@@ -257,14 +283,19 @@ void XShader::GetTexture(unsigned int index, int width, int height, unsigned cha
     glBindTexture(GL_TEXTURE_2D, txts[index]);
     // 替换纹理内存
     glTexSubImage2D(GL_TEXTURE_2D,0,0,0,width,height,format,GL_UNSIGNED_BYTE,buf);
+    mutex.unlock();
 }
 
 void XShader::Draw()
 {
+    mutex.lock();
     if (!program)
     {
+        mutex.unlock();
         return;
     }
     //三维绘制
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    mutex.unlock();
 }
+

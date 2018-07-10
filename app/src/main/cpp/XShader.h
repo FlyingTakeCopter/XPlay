@@ -5,6 +5,8 @@
 #ifndef XPLAY_XSHADER_H
 #define XPLAY_XSHADER_H
 
+#include <mutex>
+
 enum XShaderType
 {
     XSHADER_YUV420P = 0,    //软解码和虚拟机
@@ -15,6 +17,7 @@ enum XShaderType
 class XShader {
 public:
     virtual bool Init(XShaderType type=XSHADER_YUV420P);
+    virtual void Close();
 
     // 获取纹理并绑定到内存 isa：是否带透明通道NV12要用
     virtual void GetTexture(unsigned int index, int width, int height, unsigned char* buf,bool isa=false);
@@ -25,6 +28,7 @@ protected:
     unsigned int fsh;
     unsigned int program;
     unsigned int txts[100] = {0};//记录材质层,便于清理
+    std::mutex mutex;
 };
 
 
