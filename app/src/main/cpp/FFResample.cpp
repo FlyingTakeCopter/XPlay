@@ -11,14 +11,23 @@ extern "C"
 #include <libavcodec/avcodec.h>
 }
 
-bool FFResample::Open(XParameter in, XParameter out) {
+void FFResample::Close() {
+    mutex.lock();
+    if (actx)
+        swr_free(&actx);
+    mutex.unlock();
+}
 
+bool FFResample::Open(XParameter in, XParameter out) {
+    Close();
     if (!in.para || !out.para)
     {
         XLOGE("FFResample Open failed in|out is null");
         return false;
     }
 //    XLOGI("FFResample Open start");
+    mutex.lock();
+
     // 初始化重采样参数
     actx = swr_alloc();
     actx = swr_alloc_set_opts(actx,
@@ -34,17 +43,24 @@ bool FFResample::Open(XParameter in, XParameter out) {
     if (res != 0)
     {
         XLOGE("swr_init failed");
+        mutex.unlock();
         return false;
     }
     outChannels = in.para->channels;
     outFormat = AV_SAMPLE_FMT_S16;
     XLOGI("FFResample::Open success");
+    mutex.unlock();
     return true;
 }
 
 XData FFResample::Resample(XData inData) {
     if (!inData.data || inData.size <= 0) return XData();
-    if (!actx) return XData();
+    mutex.lock();
+    if (!actx)
+    {
+        mutex.unlock();
+        return XData();
+    }
 //    XLOGI("Resample start inData.size = %d", inData.size);
 //    return XData();
     AVFrame*frame = (AVFrame*)inData.data;
@@ -54,6 +70,7 @@ XData FFResample::Resample(XData inData) {
     int size = outChannels * frame->nb_samples * av_get_bytes_per_sample((AVSampleFormat) outFormat);
     if (size <= 0)
     {
+        mutex.unlock();
         return XData();
     }
     out.Alloc(size);
@@ -66,11 +83,13 @@ XData FFResample::Resample(XData inData) {
     if (len <= 0)
     {
         out.Drop();
+        mutex.unlock();
         return XData();
     }
 
     out.pts = inData.pts;
 //    XLOGI("swr_convert success len = %d", len);
 //    XLOGI("swr_convert success data.size = %d", out.size);
+    mutex.unlock();
     return out;
 }

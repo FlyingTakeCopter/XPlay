@@ -22,7 +22,7 @@ public:
 
 private:
     std::vector<IObserver*> vobs;
-    std::mutex mutex;
+    std::mutex obsMutex;
 };
 
 

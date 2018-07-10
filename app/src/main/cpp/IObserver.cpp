@@ -5,20 +5,20 @@
 #include "IObserver.h"
 
 void IObserver::AddObs(IObserver *obs) {
-    mutex.lock();
+    obsMutex.lock();
     vobs.push_back(obs);
-    mutex.unlock();
+    obsMutex.unlock();
 }
 
 void IObserver::Notify(XData data) {
     if (data.size == 0)
         return;
 
-    mutex.lock();
+    obsMutex.lock();
     int num = vobs.size();
     for (int i = 0; i < num; ++i) {
         vobs[i]->Update(data);
     }
 
-    mutex.unlock();
+    obsMutex.unlock();
 }

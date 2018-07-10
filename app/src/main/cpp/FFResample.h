@@ -13,10 +13,13 @@ class FFResample : public IResample {
 public:
     virtual bool Open(XParameter in, XParameter out);
 
+    virtual void Close();
+
     virtual XData Resample(XData inData);
 
 private:
     SwrContext*actx;
+    std::mutex mutex;
 };
 
 

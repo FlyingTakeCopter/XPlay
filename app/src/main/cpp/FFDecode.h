@@ -17,6 +17,7 @@ public:
     // 初始化硬解码
     static void InitHard(JavaVM*vm);
 
+    virtual void Close();
     virtual bool Open(XParameter p, bool isHard);
     // 发送数据解码，内有判空处理
     virtual bool SendPacket(XData pkt);
@@ -26,6 +27,7 @@ public:
 protected:
     AVCodecContext*codecxt;
     AVFrame*frame;
+    std::mutex mutex;
 };
 
 

@@ -16,7 +16,24 @@ void FFDecode::InitHard(JavaVM *vm) {
     av_jni_set_java_vm(vm,0);
 }
 
+void FFDecode::Close() {
+    mutex.lock();
+    vPts = 0;
+    synPts = 0;
+    if (codecxt)
+    {
+        avcodec_close(codecxt);
+        avcodec_free_context(&codecxt);
+    }
+    if (frame)
+        av_frame_free(&frame);//@param frame frame to be freed. The pointer will be set to NULL.
+
+    mutex.unlock();
+}
+
 bool FFDecode::Open(XParameter p, bool isHard) {
+    Close();
+
     if(!p.para)
         return false;
     AVCodecParameters*parameters = p.para;
@@ -33,6 +50,7 @@ bool FFDecode::Open(XParameter p, bool isHard) {
         XLOGE("avcodec_find_decoder failed %d", parameters->codec_id);
         return false;
     }
+    mutex.lock();
     //创建解码器上下文，并拷贝参数
     codecxt = avcodec_alloc_context3(codec);
     avcodec_parameters_to_context(codecxt, parameters);
@@ -43,6 +61,7 @@ bool FFDecode::Open(XParameter p, bool isHard) {
         char buf[1024] = {0};
         av_strerror(res, buf, sizeof(buf));
         XLOGE("avcodec_open2 failed reason %s", buf);
+        mutex.unlock();
         return false;
     }
     // 设置流类型
@@ -50,12 +69,15 @@ bool FFDecode::Open(XParameter p, bool isHard) {
     // 初始化frame内存，RecvFrame中会用到
     frame = av_frame_alloc();
     XLOGI("FFDecode::Open success");
+    mutex.unlock();
     return true;
 }
 
 bool FFDecode::SendPacket(XData pkt) {
     if (!pkt.data) return false;
+    mutex.lock();
     int res = avcodec_send_packet(codecxt, (const AVPacket *) pkt.data);
+    mutex.unlock();
     if (res != 0)
     {
         return false;
@@ -64,11 +86,17 @@ bool FFDecode::SendPacket(XData pkt) {
 }
 
 XData FFDecode::RecvFrame() {
+    mutex.lock();
     if (!codecxt)
+    {
+        mutex.unlock();
         return XData();
+    }
+    // 内部会释放上次的资源
     int res = avcodec_receive_frame(codecxt, frame);
     if (res != 0)
     {
+        mutex.unlock();
         return  XData();
     }
     XData d;
@@ -88,8 +116,9 @@ XData FFDecode::RecvFrame() {
     memcpy(d.datas, frame->data, sizeof(d.datas));
     // pts赋值
     d.pts = (int) frame->pts;
-
+    mutex.unlock();
     return d;
 }
+
 
 
