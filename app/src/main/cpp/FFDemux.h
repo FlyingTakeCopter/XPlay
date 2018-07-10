@@ -13,6 +13,7 @@ class FFDemux : public IDemux {
 public:
     // 解封装 打开本地文件 或者流媒体 rtmp rtsp http
     virtual bool Open(const char* url);
+    virtual void Close();
 
     virtual XParameter GetVParameter();
     virtual XParameter GetAParameter();
@@ -27,6 +28,7 @@ public:
     AVFormatContext*ic = 0;//头文件中初始化，只适用于构造函数没有参数(C++11的坑)
     int audioStream = 1;//音频流 通常是1
     int videoStream = 0;//视频流 通常是0
+    std::mutex mutex;
 };
 
 

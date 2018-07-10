@@ -16,6 +16,10 @@ static double r2d(AVRational rational)
 }
 
 bool FFDemux::Open(const char *url) {
+
+    Close();
+
+    mutex.lock();
     // 打开url
     int res = avformat_open_input(&ic, url, 0, 0);
     if (res != 0)
@@ -23,6 +27,7 @@ bool FFDemux::Open(const char *url) {
         char buf[1024] = {0};
         av_strerror(res, buf, sizeof(buf));
         XLOGE("open file %s failed, reason: %s", url, buf);
+        mutex.unlock();
         return false;
     }
     XLOGI("open file %s success", url);
@@ -34,27 +39,40 @@ bool FFDemux::Open(const char *url) {
         char buf[1024] = {0};
         av_strerror(res, buf, sizeof(buf));
         XLOGE("avformat_find_stream_info failed, reason: %s", buf);
+        mutex.unlock();
         return false;
     }
     this->totalms = ic->duration / (AV_TIME_BASE / 1000);
     //XLOGI("total ms = %d", this->totalms);
 
+    // 在GetVParameter/GetAParameter之前解锁，防止里面还有锁
+    mutex.unlock();
+
     GetVParameter();
     GetAParameter();
-
-
-
     return true;
 }
 
+void FFDemux::Close() {
+    mutex.lock();
+    if (ic)
+        avformat_close_input(&ic);//内部有置空
+    mutex.unlock();
+}
+
 XData FFDemux::Read() {
-    if (!ic) return XData();
+    mutex.lock();
+    if (!ic){
+        mutex.unlock();
+        return XData();
+    }
     // 读取一帧
     AVPacket*pkt = av_packet_alloc();
     int res = av_read_frame(ic, pkt);
     if (res != 0)
     {
         av_packet_free(&pkt);   // 失败释放pkt防止内存泄漏
+        mutex.unlock();
         return XData();
     }
     //XLOGI("packet size %d pts %lld", pkt->size, pkt->pts);
@@ -73,6 +91,7 @@ XData FFDemux::Read() {
     {
         // 其他流
         av_packet_free(&pkt);   // 失败释放pkt防止内存泄漏
+        mutex.unlock();
         return XData();
     }
 
@@ -80,6 +99,8 @@ XData FFDemux::Read() {
     pkt->pts = pkt->pts * (1000 * r2d(ic->streams[pkt->stream_index]->time_base));
     pkt->dts = pkt->dts * (1000 * r2d(ic->streams[pkt->stream_index]->time_base));
     d.pts = (int) pkt->pts;
+
+    mutex.unlock();
 
     return d;
 }
@@ -99,12 +120,18 @@ FFDemux::FFDemux() {
 }
 
 XParameter FFDemux::GetVParameter() {
-    if (!ic) return XParameter();
+    mutex.lock();
+    if (!ic)
+    {
+        mutex.unlock();
+        return XParameter();
+    }
 
     int res = av_find_best_stream(ic,AVMEDIA_TYPE_VIDEO, -1,-1,0,0);
     if (res <0)
     {
         XLOGE("GetVParameter failed");
+        mutex.unlock();
         return XParameter();
     }
 
@@ -113,16 +140,24 @@ XParameter FFDemux::GetVParameter() {
     XParameter parameter;
     parameter.para = ic->streams[res]->codecpar;
 
+    mutex.unlock();
+
     return parameter;
 }
 
 XParameter FFDemux::GetAParameter() {
-    if (!ic) return XParameter();
+    mutex.lock();
+    if (!ic)
+    {
+        mutex.unlock();
+        return XParameter();
+    }
 
     int res = av_find_best_stream(ic,AVMEDIA_TYPE_AUDIO, -1,-1,0,0);
     if (res <0)
     {
         XLOGE("GetAParameter failed");
+        mutex.unlock();
         return XParameter();
     }
 
@@ -132,5 +167,9 @@ XParameter FFDemux::GetAParameter() {
     parameter.para = ic->streams[res]->codecpar;
     parameter.channels = ic->streams[res]->codecpar->channels;
     parameter.sample_rate = ic->streams[res]->codecpar->sample_rate;
+
+    mutex.unlock();
+
     return parameter;
 }
+
